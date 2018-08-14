@@ -73,12 +73,6 @@ if [ -z "${ARTIFACTORY_TOKEN}" ]; then
 fi
 
 
-echo "---> Node version"
-node --version
-
-echo "---> NPM version"
-npm --version
-
 if [ "$ARTIFACTORY_REPOSITORY_TYPE" = "NPM" ]; then
   echo "ARTIFACTORY_REPOSITORY_TYPE has the value 'NPM'"
 
@@ -86,16 +80,26 @@ if [ "$ARTIFACTORY_REPOSITORY_TYPE" = "NPM" ]; then
       echo "Aborting due to ARTIFACTORY_NPM_REPO environment variable is not setted"
       exit 1
   fi
+
+  echo "Retrieving artifact from Artifactory Angular NPM repository"
+  curl -o $LOCAL_SOURCE_DIR/${ANGULAR_PACKAGE_TARBALL} -H "X-JFrog-Art-Api:${ARTIFACTORY_TOKEN}" -O ${ARTIFACTORY_NPM_REPO}${ANGULAR_PACKAGE_NAME}/${ANGULAR_PACKAGE_TARBALL}
+
 fi
 
 if [ "$ARTIFACTORY_REPOSITORY_TYPE" = "Generic" ]; then
     echo "ARTIFACTORY_REPOSITORY_TYPE has the value 'Generic'"
 
-      if [ -z "${ARTIFACTORY_GENERIC_REPO}" ]; then
-          echo "Aborting due to ARTIFACTORY_GENERIC_REPO environment variable is not setted"
-          exit 1
-      fi
+    if [ -z "${ARTIFACTORY_GENERIC_REPO}" ]; then
+      echo "Aborting due to ARTIFACTORY_GENERIC_REPO environment variable is not setted"
+      exit 1
+    fi
+
+    echo "Retrieving artifact from Artifactory Angular Generic repository"
+    curl -o $LOCAL_SOURCE_DIR/${ANGULAR_PACKAGE_TARBALL} -H "X-JFrog-Art-Api:${ARTIFACTORY_TOKEN}" -O ${ARTIFACTORY_GENERIC_REPO}${ANGULAR_PACKAGE_NAME}/${ANGULAR_PACKAGE_TARBALL}
+
 fi
+
+
 
 
 if [ -z "${NODEJS_IS_SCOPED_PACKAGE}" ]; then
