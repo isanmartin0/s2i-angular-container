@@ -57,8 +57,20 @@ if [ -z "${NODEJS_PACKAGE_TARBALL}" ]; then
     exit 1
 fi
 
+if [ -z "${ARTIFACTORY_REPOSITORY_TYPE}" ]; then
+    echo "Aborting due to ARTIFACTORY_REPOSITORY_TYPE environment variable is not setted"
+    exit 1
+fi
 
+if [ "$ARTIFACTORY_REPOSITORY_TYPE" != "NPM" ] && [ "$ARTIFACTORY_REPOSITORY_TYPE" != "Generic" ]; then
+    echo "Aborting due to ARTIFACTORY_REPOSITORY_TYPE environment variable has an incorrect value"
+    exit 1
+fi
 
+if [ -z "${ARTIFACTORY_TOKEN}" ]; then
+    echo "Aborting due to ARTIFACTORY_TOKEN environment variable is not setted"
+    exit 1
+fi
 
 
 echo "---> Node version"
@@ -69,13 +81,22 @@ npm --version
 
 if [ "$ARTIFACTORY_REPOSITORY_TYPE" = "NPM" ]; then
   echo "ARTIFACTORY_REPOSITORY_TYPE has the value 'NPM'"
-else
-   if [ "$ARTIFACTORY_REPOSITORY_TYPE" = "Generic" ]; then
-      echo "ARTIFACTORY_REPOSITORY_TYPE has the value 'Generic'"
-   else
-      echo "ARTIFACTORY_REPOSITORY_TYPE has another value"
-   fi
+
+  if [ -z "${ARTIFACTORY_NPM_REPO}" ]; then
+      echo "Aborting due to ARTIFACTORY_NPM_REPO environment variable is not setted"
+      exit 1
+  fi
 fi
+
+if [ "$ARTIFACTORY_REPOSITORY_TYPE" = "Generic" ]; then
+    echo "ARTIFACTORY_REPOSITORY_TYPE has the value 'Generic'"
+
+      if [ -z "${ARTIFACTORY_GENERIC_REPO}" ]; then
+          echo "Aborting due to ARTIFACTORY_GENERIC_REPO environment variable is not setted"
+          exit 1
+      fi
+fi
+
 
 if [ -z "${NODEJS_IS_SCOPED_PACKAGE}" ]; then
     echo "Aborting due to NODEJS_IS_SCOPED_PACKAGE environment variable is not setted"
