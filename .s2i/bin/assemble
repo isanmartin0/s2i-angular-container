@@ -67,6 +67,16 @@ node --version
 echo "---> NPM version"
 npm --version
 
+if [ "$ARTIFACTORY_REPOSITORY_TYPE" = "NPM" ]; then
+  echo "ARTIFACTORY_REPOSITORY_TYPE has the value 'NPM'"
+else
+   if [ "$ARTIFACTORY_REPOSITORY_TYPE" = "Generic" ]; then
+      echo "ARTIFACTORY_REPOSITORY_TYPE has the value 'Generic'"
+   else
+      echo "ARTIFACTORY_REPOSITORY_TYPE has another value"
+   fi
+fi
+
 if [ -z "${NODEJS_IS_SCOPED_PACKAGE}" ]; then
     echo "Aborting due to NODEJS_IS_SCOPED_PACKAGE environment variable is not setted"
     exit 1
