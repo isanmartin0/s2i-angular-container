@@ -41,10 +41,12 @@ echo "LOCAL_SOURCE_DIR: $LOCAL_SOURCE_DIR"
 echo "DEPLOY_DIR: $DEPLOY_DIR"
 echo "NODEJS_PACKAGE_TAG: ${NODEJS_PACKAGE_TAG}"
 echo "NODEJS_PACKAGE_TARBALL: ${NODEJS_PACKAGE_TARBALL}"
-echo "IS_SCOPED_PACKAGE: ${NODEJS_IS_SCOPED_PACKAGE}"
 echo "ARTIFACTORY_NPM_REPO: ${ARTIFACTORY_NPM_REPO}"
 echo "ARTIFACTORY_NPM_AUTH: ${ARTIFACTORY_NPM_AUTH}"
 echo "ARTIFACTORY_NPM_EMAIL_AUTH: ${ARTIFACTORY_NPM_EMAIL_AUTH}"
+echo "NGINX_VERSION: ${NGINX_VERSION}"
+echo "ARTIFACTORY_REPOSITORY_TYPE: ${ARTIFACTORY_REPOSITORY_TYPE}"
+echo "ARTIFACTORY_GENERIC_REPO: ${ARTIFACTORY_GENERIC_REPO}"
 
 if [ -z "${NODEJS_PACKAGE_TAG}" ]; then
     echo "Aborting due to NODEJS_PACKAGE_TAG environment variable is not setted"
@@ -56,10 +58,7 @@ if [ -z "${NODEJS_PACKAGE_TARBALL}" ]; then
     exit 1
 fi
 
-if [ -z "${NODEJS_IS_SCOPED_PACKAGE}" ]; then
-    echo "Aborting due to NODEJS_IS_SCOPED_PACKAGE environment variable is not setted"
-    exit 1
-fi
+
 
 
 
@@ -68,6 +67,11 @@ node --version
 
 echo "---> NPM version"
 npm --version
+
+if [ -z "${NODEJS_IS_SCOPED_PACKAGE}" ]; then
+    echo "Aborting due to NODEJS_IS_SCOPED_PACKAGE environment variable is not setted"
+    exit 1
+fi
 
 
 export NPM_AUTH=${ARTIFACTORY_NPM_AUTH}
