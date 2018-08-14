@@ -74,15 +74,17 @@ fi
 
 
 if [ "$ARTIFACTORY_REPOSITORY_TYPE" = "NPM" ]; then
-  echo "ARTIFACTORY_REPOSITORY_TYPE has the value 'NPM'"
+    echo "ARTIFACTORY_REPOSITORY_TYPE has the value 'NPM'"
 
-  if [ -z "${ARTIFACTORY_NPM_REPO}" ]; then
+    if [ -z "${ARTIFACTORY_NPM_REPO}" ]; then
       echo "Aborting due to ARTIFACTORY_NPM_REPO environment variable is not setted"
       exit 1
-  fi
+    fi
 
-  echo "Retrieving artifact from Artifactory Angular NPM repository"
-  curl -o $LOCAL_SOURCE_DIR/${ANGULAR_PACKAGE_TARBALL} -H "X-JFrog-Art-Api:${ARTIFACTORY_TOKEN}" -O ${ARTIFACTORY_NPM_REPO}${ANGULAR_PACKAGE_NAME}/${ANGULAR_PACKAGE_TARBALL}
+    cd "$LOCAL_SOURCE_DIR"
+
+    echo "Retrieving artifact from Artifactory Angular NPM repository"
+    curl -o $LOCAL_SOURCE_DIR/${ANGULAR_PACKAGE_TARBALL} -H "X-JFrog-Art-Api:${ARTIFACTORY_TOKEN}" -O ${ARTIFACTORY_NPM_REPO}${ANGULAR_PACKAGE_NAME}/${ANGULAR_PACKAGE_TARBALL}
 
 fi
 
@@ -94,10 +96,52 @@ if [ "$ARTIFACTORY_REPOSITORY_TYPE" = "Generic" ]; then
       exit 1
     fi
 
+    cd "$LOCAL_SOURCE_DIR"
+
     echo "Retrieving artifact from Artifactory Angular Generic repository"
     curl -o $LOCAL_SOURCE_DIR/${ANGULAR_PACKAGE_TARBALL} -H "X-JFrog-Art-Api:${ARTIFACTORY_TOKEN}" -O ${ARTIFACTORY_GENERIC_REPO}${ANGULAR_PACKAGE_NAME}/${ANGULAR_PACKAGE_TARBALL}
 
 fi
+
+echo "---> tar artifact"
+tar -xvzf ${ANGULAR_PACKAGE_TARBALL}
+
+ERR=$?
+
+if [ $ERR -ne 0 ]; then
+    echo "Aborting due to error code $ERR from tar"
+    exit $ERR
+fi
+
+if [ -d "$LOCAL_SOURCE_DIR/package/dist" ]; then
+    #Copying module elements
+    copy_artifacts "package/dist"
+else
+    echo "Aborting due to error code 1 from copying module elements"
+    exit 1
+fi
+
+#Removing elements
+remove_elements
+
+echo "ls -al ($LOCAL_SOURCE_DIR)"
+ls -al
+
+
+#Change to $HOME
+cd $HOME
+
+echo "ls -al ($HOME)"
+ls -al
+
+
+
+
+
+
+
+
+
 
 
 
