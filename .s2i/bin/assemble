@@ -121,8 +121,6 @@ else
     exit 1
 fi
 
-echo "ls -al ($LOCAL_SOURCE_DIR)"
-ls -al
 
 #Removing elements
 remove_elements
@@ -136,88 +134,6 @@ cd $HOME
 
 echo "ls -al ($HOME)"
 ls -al
-
-
-
-
-
-
-
-
-
-
-
-
-
-if [ -z "${NODEJS_IS_SCOPED_PACKAGE}" ]; then
-    echo "Aborting due to NODEJS_IS_SCOPED_PACKAGE environment variable is not setted"
-    exit 1
-fi
-
-
-export NPM_AUTH=${ARTIFACTORY_NPM_AUTH}
-export NPM_AUTH_EMAIL=${ARTIFACTORY_NPM_EMAIL_AUTH}
-
-if [ -z "${ARTIFACTORY_NPM_REPO}" ]; then
-    echo "ARTIFACTORY_NPM_REPO variable is not setted "
-else
-    echo "---> Setting Artifactory NPM Registry location"
-    npm config set registry  ${ARTIFACTORY_NPM_REPO}
-
-    if [ -z "${ARTIFACTORY_NPM_AUTH}" ]; then
-        echo "Aborting due to NPM_AUTH environment variable is not setted"
-        exit 1
-    fi
-
-    if [ -z "${ARTIFACTORY_NPM_EMAIL_AUTH}" ]; then
-        echo "Aborting due to ARTIFACTORY_NPM_EMAIL_AUTH environment variable is not setted"
-        exit 1
-    fi
-fi
-
-echo "---> NPM Registry location"
-npm config get registry
-
-cd "$LOCAL_SOURCE_DIR"
-
-
-echo "---> NPM view tarball"
-npm view ${NODEJS_PACKAGE_TAG} dist.tarball
-
-echo "---> NPM get tarball"
-npm pack ${NODEJS_PACKAGE_TAG}
-
-echo "---> tar artifact"
-tar -xvzf ${NODEJS_PACKAGE_TARBALL}
-
-ERR=$?
-
-if [ $ERR -ne 0 ]; then
-    echo "Aborting due to error code $ERR from tar"
-    exit $ERR
-fi
-
-if [ -d "$LOCAL_SOURCE_DIR/package" ]; then
-    #Copying module elements
-    copy_artifacts "package"
-else
-    echo "Aborting due to error code 1 from copying module elements"
-    exit 1
-fi
-
-#Removing elements
-remove_elements
-
-echo "ls -al ($LOCAL_SOURCE_DIR)"
-ls -al
-
-
-#Change to $HOME
-cd $HOME
-
-echo "ls -al ($HOME)"
-ls -al
-
 
 echo "Executing original assembling"
 /usr/libexec/s2i/assemble
