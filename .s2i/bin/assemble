@@ -121,6 +121,9 @@ else
     exit 1
 fi
 
+echo "ls -al ($LOCAL_SOURCE_DIR)"
+ls -al
+
 #Removing elements
 remove_elements
 
