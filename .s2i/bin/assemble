@@ -41,10 +41,8 @@ echo "LOCAL_SOURCE_DIR: $LOCAL_SOURCE_DIR"
 echo "DEPLOY_DIR: $DEPLOY_DIR"
 echo "ANGULAR_PACKAGE_NAME: ${ANGULAR_PACKAGE_NAME}"
 echo "ANGULAR_PACKAGE_TARBALL: ${ANGULAR_PACKAGE_TARBALL}"
-echo "ARTIFACTORY_NPM_REPO: ${ARTIFACTORY_NPM_REPO}"
+echo "ARTIFACTORY_REPO: ${ARTIFACTORY_REPO}"
 echo "NGINX_VERSION: ${NGINX_VERSION}"
-echo "ARTIFACTORY_REPOSITORY_TYPE: ${ARTIFACTORY_REPOSITORY_TYPE}"
-echo "ARTIFACTORY_GENERIC_REPO: ${ARTIFACTORY_GENERIC_REPO}"
 echo "ARTIFACTORY_TOKEN: ${ARTIFACTORY_TOKEN}"
 
 if [ -z "${ANGULAR_PACKAGE_NAME}" ]; then
@@ -57,13 +55,8 @@ if [ -z "${ANGULAR_PACKAGE_TARBALL}" ]; then
     exit 1
 fi
 
-if [ -z "${ARTIFACTORY_REPOSITORY_TYPE}" ]; then
-    echo "Aborting due to ARTIFACTORY_REPOSITORY_TYPE environment variable is not setted"
-    exit 1
-fi
-
-if [ "$ARTIFACTORY_REPOSITORY_TYPE" != "NPM" ] && [ "$ARTIFACTORY_REPOSITORY_TYPE" != "Generic" ]; then
-    echo "Aborting due to ARTIFACTORY_REPOSITORY_TYPE environment variable has an incorrect value"
+if [ -z "${ARTIFACTORY_REPO}" ]; then
+    echo "Aborting due to ARTIFACTORY_REPO environment variable is not setted"
     exit 1
 fi
 
@@ -72,36 +65,11 @@ if [ -z "${ARTIFACTORY_TOKEN}" ]; then
     exit 1
 fi
 
+cd "$LOCAL_SOURCE_DIR"
 
-if [ "$ARTIFACTORY_REPOSITORY_TYPE" = "NPM" ]; then
-    echo "ARTIFACTORY_REPOSITORY_TYPE has the value 'NPM'"
+echo "Retrieving artifact from Artifactory repository"
+curl -o $LOCAL_SOURCE_DIR/${ANGULAR_PACKAGE_TARBALL} -H "X-JFrog-Art-Api:${ARTIFACTORY_TOKEN}" -O ${ARTIFACTORY_REPO}${ANGULAR_PACKAGE_NAME}/${ANGULAR_PACKAGE_TARBALL}
 
-    if [ -z "${ARTIFACTORY_NPM_REPO}" ]; then
-      echo "Aborting due to ARTIFACTORY_NPM_REPO environment variable is not setted"
-      exit 1
-    fi
-
-    cd "$LOCAL_SOURCE_DIR"
-
-    echo "Retrieving artifact from Artifactory Angular NPM repository"
-    curl -o $LOCAL_SOURCE_DIR/${ANGULAR_PACKAGE_TARBALL} -H "X-JFrog-Art-Api:${ARTIFACTORY_TOKEN}" -O ${ARTIFACTORY_NPM_REPO}${ANGULAR_PACKAGE_NAME}/${ANGULAR_PACKAGE_TARBALL}
-
-fi
-
-if [ "$ARTIFACTORY_REPOSITORY_TYPE" = "Generic" ]; then
-    echo "ARTIFACTORY_REPOSITORY_TYPE has the value 'Generic'"
-
-    if [ -z "${ARTIFACTORY_GENERIC_REPO}" ]; then
-      echo "Aborting due to ARTIFACTORY_GENERIC_REPO environment variable is not setted"
-      exit 1
-    fi
-
-    cd "$LOCAL_SOURCE_DIR"
-
-    echo "Retrieving artifact from Artifactory Angular Generic repository"
-    curl -o $LOCAL_SOURCE_DIR/${ANGULAR_PACKAGE_TARBALL} -H "X-JFrog-Art-Api:${ARTIFACTORY_TOKEN}" -O ${ARTIFACTORY_GENERIC_REPO}${ANGULAR_PACKAGE_NAME}/${ANGULAR_PACKAGE_TARBALL}
-
-fi
 
 echo "---> tar artifact"
 tar -xvzf ${ANGULAR_PACKAGE_TARBALL}
