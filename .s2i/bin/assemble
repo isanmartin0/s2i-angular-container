@@ -105,3 +105,4 @@ ls -al
 
 echo "Executing original assembling"
 /usr/libexec/s2i/assemble
+sed -i 'location \/ {/location \/ {\ntry_files $uri $uri/ /index.html;'
