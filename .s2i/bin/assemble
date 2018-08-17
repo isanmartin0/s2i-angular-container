@@ -105,3 +105,4 @@ ls -al
 
 echo "Executing original assembling"
 /usr/libexec/s2i/assemble
+#sed -i 's/location \/ {/location \/ {\n        try_files $uri $uri\/ \/index.html;/g' $NGINX_CONF_PATH
