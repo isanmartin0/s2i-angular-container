@@ -89,9 +89,9 @@ if [ $ERR -ne 0 ]; then
     exit $ERR
 fi
 
-if [ -d "$LOCAL_SOURCE_DIR/package$BUILD_OUTPUT_PATH" ]; then
+if [ -d "$LOCAL_SOURCE_DIR/package/$BUILD_OUTPUT_PATH" ]; then
     #Copying module elements
-    copy_artifacts "package$BUILD_OUTPUT_PATH"
+    copy_artifacts "package/$BUILD_OUTPUT_PATH"
 else
     echo "Aborting due to error code 1 from copying module elements"
     exit 1
